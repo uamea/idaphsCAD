@@ -1,0 +1,113 @@
+import {
+    Palette,
+    Button,
+    ComboBox,
+    GroupBox,
+    GridBox,
+    Slider,
+    HorizontalBox,
+    VerticalBox,
+    ProgressIndicator,
+} from "std-widgets.slint";
+
+import {
+    CADToolbar,
+    ToolbarButton,
+    CadActions,
+} from "components/toolbar/toolbar.slint";
+
+export { CadActions }
+
+export component AppWindow inherits Window {
+    forward-focus: key_handler;
+    in property <image> texture <=> i.source;
+    out property <length> requested-texture-width: i.width;
+    out property <length> requested-texture-height: i.height;
+    // --- コールバック定義 ---
+    callback reset_camera();
+    // クリック通知 (x, y)
+    callback image_clicked(length, length);
+    // マウス移動通知 (x, y)
+    callback mouse_moved(length, length);
+    // ホイール回転通知 (delta_y)
+    callback wheel_scrolled(float);
+    // ホイールクリック通知
+    callback middle_click_up();
+    callback middle_click_down(length, length);
+    callback key_event_pressed_received(string, KeyboardModifiers);
+    callback key_event_released_received(string, KeyboardModifiers);
+    key_handler := FocusScope {
+        key-pressed(event) => {
+            // すべてのキーイベントをRustへ投げる
+            root.key_event_pressed_received(event.text, event.modifiers);
+            accept
+        }
+        key-released(event) => {
+            root.key_event_released_received(event.text, event.modifiers);
+            accept
+        }
+    }
+    VerticalLayout {
+        label := Text {
+            text: "IDAPhS CAD";
+            horizontal-alignment: center;
+        }
+        CADToolbar { }
+        HorizontalLayout {
+            alignment: center;
+            spacing: 10px;
+            Button {
+                text: "Button clicked";
+                clicked => {
+                    label.text = " IDAPhS CAD - Button clicked";
+                }
+            }
+            Button {
+                text: "Camera Reset Button";
+                clicked => root.reset_camera();
+            }
+        }
+        // 画像と操作領域
+        Rectangle {
+            preferred-width: 640px;
+            preferred-height: 480px;
+            vertical-stretch: 1;
+            horizontal-stretch: 1;
+            i := Image {
+                width: 100%;
+                height: 100%;
+                image-fit: fill;
+            }
+            touch := TouchArea {
+                width: 100%;
+                height: 100%;
+                // マウス移動（ホバー時も含む）
+                pointer-event(event) => {
+                    if (event.kind == PointerEventKind.move) {
+                        root.mouse_moved(self.mouse-x, self.mouse-y);
+                    }
+                    if (event.button == PointerEventButton.middle) {
+                        if (event.kind == PointerEventKind.down) {
+                            root.middle_click_down(self.mouse-x, self.mouse-y);
+                        }
+                        if (event.kind == PointerEventKind.up) {
+                            root.middle_click_up();
+                        }
+                    }
+                }
+
+                // 左クリックなどの一般的なクリック
+                clicked => {
+                    root.image_clicked(self.pressed-x, self.pressed-y);
+                }
+
+                // マウスホイール
+                scroll-event(event) => {
+                    root.wheel_scrolled(event.delta-y / 1px);
+                    // accept を返さないと親要素にイベントが流れる場合があります
+                    accept
+                }
+            }
+        }
+    }
+}

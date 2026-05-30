@@ -1,0 +1,171 @@
+enum ToolbarMode { large, wide, icon_only }
+export global CadActions {
+    callback trigger_command(string /* mode */, string /* op_id */);
+}
+export component ToolbarButton inherits Rectangle {
+    in property <string> cad_mode;
+    in property <string> op_id;
+    in property <image> icon;
+    in property <string> text;
+    in property <ToolbarMode> mode: ToolbarMode.large;
+    in property <bool> checked: false; // 選択状態
+    in property <bool> enabled: true;
+    callback clicked;
+    width: mode == ToolbarMode.large ? 80px : mode == ToolbarMode.wide ? 120px : 40px;
+    height: mode == ToolbarMode.large ? 70px : 40px;
+    states [
+        active when checked: {
+            background: #0078d422; // 薄い青
+            border-color: #0078d4;
+            border-width: 1px;
+        }
+        pressed when touch.pressed: {
+            background: #e2e2e2;
+        }
+        hover when touch.has-hover: {
+            background: #f0f0f0;
+        }
+    ]
+    background: transparent;
+    animate background { duration: 150ms; }
+    touch := TouchArea {
+        clicked => {
+            CadActions.trigger_command(cad_mode, op_id);
+        }
+    }
+// Wrap the conditional block here
+    HorizontalLayout {
+        alignment: center;
+        if (mode == ToolbarMode.large): VerticalLayout {
+            alignment: center; // Vertical centering
+        spacing: 4px;
+            Image {
+                source: icon;
+                width: 32px;
+                height: 32px;
+            // horizontal-alignment: center centers the pixels inside the 32px box
+        }
+            Text {
+                text: text;
+                font-size: 11px;
+                color: #333;
+                horizontal-alignment: center; // Centers text within the text element
+            }
+        }
+    }
+    if (mode == ToolbarMode.wide): HorizontalLayout {
+        padding: 8px;
+        spacing: 8px;
+        alignment: start;
+        Image {
+            source: icon;
+            width: 24px;
+            height: 24px;
+            vertical-alignment: center;
+        }
+        Text {
+            text: text;
+            font-size: 12px;
+            vertical-alignment: center;
+            color: #333;
+        }
+    }
+    if (mode == ToolbarMode.icon_only): HorizontalLayout {
+        alignment: center;
+        Image {
+            source: icon;
+            width: 24px;
+            height: 24px;
+            vertical-alignment: center;
+        }
+    }
+}
+
+export component CADToolbar {
+    in-out property <int> active-tab: 0;
+    callback sketch_tool_line_clicked;
+    callback sketch_tool_rect_clicked;
+    callback extrusion_clicked;
+    callback extrusion_cut_clicked;
+    VerticalLayout {
+        // tab selection
+        HorizontalLayout {
+            height: 30px;
+            spacing: 2px;
+            for tab-name[i] in ["sketch", "feature"]: Rectangle {
+                background: active-tab == i ? #ffffff : #e0e0e0;
+                border-top-left-radius: 4px;
+                border-top-right-radius: 4px;
+                Text {
+                    text: tab-name;
+                    color: active-tab == i ? #000 : #555;
+                }
+                TouchArea {
+                    clicked => {
+                        active-tab = i;
+                    }
+                }
+            }
+        }
+        // toolbar
+        Rectangle {
+            background: #ffffff;
+            border-width: 1px;
+            border-color: #ccc;
+            HorizontalLayout {
+                padding: 5px;
+                spacing: 10px;
+                alignment: start;
+                if (active-tab == 0): HorizontalLayout {
+                    HorizontalLayout {
+                        spacing: 2px;
+                        ToolbarButton {
+                            cad_mode: "sketch_mode";
+                            op_id: "line";
+                            text: "Line";
+                            mode: ToolbarMode.large;
+                            icon: @image-url("../../../assets/line.png");
+                            enabled: true;
+                            checked: false;
+                        }
+                        ToolbarButton {
+                            cad_mode: "sketch_mode";
+                            op_id: "rect";
+                            text: "Rect";
+                            mode: ToolbarMode.large;
+                            icon: @image-url("../../../assets/rect.png");
+                            enabled: true;
+                            checked: false;
+                        }
+                    }
+                    // delimiter
+                    Rectangle {
+                        width: 1px;
+                        background: #ddd;
+                        height: 80%;
+                    }
+                }
+                if (active-tab == 1): HorizontalLayout {
+                    ToolbarButton {
+                        cad_mode: "extrusion";
+                        op_id: "extrude";
+                        text: "Extrude";
+                        mode: ToolbarMode.large;
+                        icon: @image-url("../../../assets/extrusion.png");
+                        enabled: true;
+                        checked: false;
+                    }
+                    ToolbarButton {
+                        cad_mode: "extrusion";
+                        op_id: "exrusion_cut";
+                        text: "Remove";
+                        mode: ToolbarMode.large;
+                        icon: @image-url("../../../assets/remove.png");
+                        enabled: true;
+                        checked: false;
+                    }
+                }
+            }
+        }
+    }
+}

@@ -1,0 +1,23 @@
+[workspace]
+members = [
+  "crates/app", 
+]
+
+resolver = "2"
+
+[patch.crates-io]
+truck-assembly = { git = "https://github.com/ricosjp/truck", rev = "1fc145c" }
+truck-base = { git = "https://github.com/ricosjp/truck", rev = "1fc145c" }
+truck-derivers = { git = "https://github.com/ricosjp/truck", rev = "1fc145c" }
+truck-geometry = { git = "https://github.com/ricosjp/truck", rev = "1fc145c" }
+truck-geotrait = { git = "https://github.com/ricosjp/truck", rev = "1fc145c" }
+truck-js = { git = "https://github.com/ricosjp/truck", rev = "1fc145c" }
+truck-meshalgo = { git = "https://github.com/ricosjp/truck", rev = "1fc145c" }
+truck-modeling = { git = "https://github.com/ricosjp/truck", rev = "1fc145c" }
+truck-platform = { git = "https://github.com/ricosjp/truck", rev = "1fc145c" }
+truck-polymesh = { git = "https://github.com/ricosjp/truck", rev = "1fc145c" }
+truck-rendimpl = { git = "https://github.com/ricosjp/truck", rev = "1fc145c" }
+truck-shapeops = { git = "https://github.com/ricosjp/truck", rev = "1fc145c" }
+truck-stepio = { git = "https://github.com/ricosjp/truck", rev = "1fc145c" }
+truck-topology = { git = "https://github.com/ricosjp/truck", rev = "1fc145c" }
+
