@@ -1,8 +1,8 @@
-use crate::MyTruckRenderer;
-use crate::*;
-use messages::{ControlMessage, ExtrusionMessage, SketchMessage};
+use crate::scene::SceneRenderer;
+use crate::messages::SketchMessage;
+use truck_rendimpl::*;
 
-impl MyTruckRenderer<AppMessage> {
+impl SceneRenderer {
     pub fn handle_sketch_controls(&mut self, sketch_msg: SketchMessage) {
         match sketch_msg {
             SketchMessage::SketchModeClicked => {

@@ -1,8 +1,7 @@
-use crate::MyTruckRenderer;
-use crate::*;
-use messages::{ControlMessage, ExtrusionMessage};
+use crate::scene::SceneRenderer;
+use crate::messages::ExtrusionMessage;
 
-impl MyTruckRenderer<AppMessage> {
+impl SceneRenderer {
     pub fn handle_extrusion_controls(&mut self, extrusion_msg: ExtrusionMessage) {
         use ExtrusionMessage::*;
         match extrusion_msg {

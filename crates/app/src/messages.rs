@@ -56,6 +56,7 @@ pub enum InputMessage {
     MouseMove {
         x: f32,
         y: f32,
+        modifiers: KeyboardModifiers,
     },
     Wheel {
         delta: f32,

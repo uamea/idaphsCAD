@@ -1,6 +1,8 @@
 [workspace]
 members = [
   "crates/app", 
+  "crates/cad_core", 
+  "crates/cad_renderer",
 ]
 
 resolver = "2"

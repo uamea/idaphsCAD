@@ -28,7 +28,7 @@ export component AppWindow inherits Window {
     // クリック通知 (x, y)
     callback image_clicked(length, length);
     // マウス移動通知 (x, y)
-    callback mouse_moved(length, length);
+    callback mouse_moved(length, length, KeyboardModifiers);
     // ホイール回転通知 (delta_y)
     callback wheel_scrolled(float);
     // ホイールクリック通知
@@ -84,7 +84,7 @@ export component AppWindow inherits Window {
                 // マウス移動（ホバー時も含む）
                 pointer-event(event) => {
                     if (event.kind == PointerEventKind.move) {
-                        root.mouse_moved(self.mouse-x, self.mouse-y);
+                        root.mouse_moved(self.mouse-x, self.mouse-y, event.modifiers);
                     }
                     if (event.button == PointerEventButton.middle) {
                         if (event.kind == PointerEventKind.down) {

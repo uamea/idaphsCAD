@@ -1,7 +1,6 @@
-use crate::MyTruckRenderer;
-use crate::*;
-use messages::*;
-use slint::Weak;
+use crate::{AppWindow, CadActions};
+use crate::messages::*;
+use slint::{ComponentHandle, Weak};
 
 pub fn setup_toolbar_controls(
     ui_weak: Weak<AppWindow>,

@@ -1,0 +1,23 @@
+[package]
+name = "cad_core"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+async-compat = "0.2.5"
+async-trait = "0.1.89"
+smol = "2.0.2"
+truck-platform = "0.6.0"
+truck-rendimpl = "0.6.0" 
+truck-modeling = "0.6.0" 
+truck-meshalgo = "0.4.0"
+truck-polymesh = "0.6.0"
+truck-topology = "0.6.0"
+
+[target.'cfg(not(target_arch = "wasm32"))'.dependencies]
+# used to run code common to wasm build. 
+pollster = "0.4.0" 
+
+[profile.release]
+codegen-units = 1
+lto = true
