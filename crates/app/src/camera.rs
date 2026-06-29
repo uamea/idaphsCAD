@@ -1,2 +1,2 @@
 use crate::*;
-use messages::{CameraMessage, ControlMessage, InputMessage};
+use messages::{CameraMessage, InputMessage};

@@ -1,9 +1,5 @@
 [workspace]
-members = [
-  "crates/app", 
-  "crates/cad_core", 
-  "crates/cad_renderer",
-]
+members = ["crates/cad_app", "crates/cad_core", "crates/cad_renderer"]
 
 resolver = "2"
 
@@ -22,4 +18,3 @@ truck-rendimpl = { git = "https://github.com/ricosjp/truck", rev = "1fc145c" }
 truck-shapeops = { git = "https://github.com/ricosjp/truck", rev = "1fc145c" }
 truck-stepio = { git = "https://github.com/ricosjp/truck", rev = "1fc145c" }
 truck-topology = { git = "https://github.com/ricosjp/truck", rev = "1fc145c" }
-

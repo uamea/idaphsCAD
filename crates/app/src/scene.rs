@@ -1,6 +1,6 @@
-use crate::cad_data::CadData;
-use crate::messages::AppMessage;
-use crate::slint_truck_adapter::TruckRenderer;
+use cad_core::cad_data::CadData;
+use cad_renderer::messages::AppMessage;
+use cad_renderer::slint_truck_adapter::TruckRenderer;
 use std::collections::{HashMap, HashSet};
 use std::f64::consts::PI;
 use std::marker::PhantomData;

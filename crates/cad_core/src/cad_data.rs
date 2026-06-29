@@ -1,6 +1,7 @@
 use std::collections::HashMap;
+use std::path::Path;
 use truck_meshalgo::prelude::*;
-use truck_modeling::{Edge, EdgeID, Face, FaceID, Solid, Vertex, VertexID};
+use truck_modeling::{EdgeID, FaceID, Solid, VertexID};
 use truck_polymesh::PolygonMesh;
 
 #[derive(Default, Clone, Debug)]
@@ -19,7 +20,13 @@ pub struct CadData {
 }
 
 impl CadData {
-    pub fn new(solid: Solid) -> Self {
+    pub fn new() -> Self {
+        let solid = Solid::new(vec![]);
+
+        CadData::from_solid(solid)
+    }
+
+    pub fn from_solid(solid: Solid) -> Self {
         let mut face_meshes = HashMap::new();
         let mut edge_meshes = HashMap::new();
         let mut vertex_meshes = HashMap::new();
@@ -51,5 +58,11 @@ impl CadData {
             vertex_meshes,
             selection: SelectionState::default(),
         }
+    }
+}
+
+impl Default for CadData {
+    fn default() -> Self {
+        Self::new()
     }
 }

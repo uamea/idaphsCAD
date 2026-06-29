@@ -2,7 +2,6 @@ use lyon::tessellation::*;
 use slint::wgpu_27::wgpu;
 use truck_modeling::*;
 
-// 頂点の構造体定義
 #[repr(C)]
 #[derive(Copy, Clone, Debug, bytemuck::Pod, bytemuck::Zeroable)]
 pub struct LyonVertex {
@@ -58,7 +57,7 @@ impl LyonLineRenderer {
             }],
         });
 
-        // 3. レンダーパイプラインの作成
+        // create the rendering pipeline
         let pipeline_layout = device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {
             label: Some("Lyon Pipeline Layout"),
             bind_group_layouts: &[&bind_group_layout],
@@ -83,16 +82,16 @@ impl LyonLineRenderer {
                 entry_point: Some("fs_main"),
                 compilation_options: Default::default(),
                 targets: &[Some(wgpu::ColorTargetState {
-                    format: wgpu::TextureFormat::Rgba8Unorm, // Slintのバッファフォーマットに合わせる
-                    blend: Some(wgpu::BlendState::ALPHA_BLENDING), // アルファブレンディングを有効に
+                    format: wgpu::TextureFormat::Rgba8Unorm,
+                    blend: Some(wgpu::BlendState::ALPHA_BLENDING),
                     write_mask: wgpu::ColorWrites::ALL,
                 })],
             }),
             primitive: wgpu::PrimitiveState {
-                topology: wgpu::PrimitiveTopology::TriangleList, // lyonは線を三角形に分解するためList
+                topology: wgpu::PrimitiveTopology::TriangleList,
                 ..Default::default()
             },
-            depth_stencil: None, // ★最前面に描画するため深度テストはオフ（FreeCAD等のスケッチの挙動）
+            depth_stencil: None,
             multisample: wgpu::MultisampleState::default(),
             multiview: None,
             cache: None,
@@ -108,7 +107,6 @@ impl LyonLineRenderer {
         }
     }
 
-    // スケッチデータが更新されたときに呼び出し、GPUバッファを再構築する
     pub fn update_buffers(&mut self, device: &wgpu::Device, raw_lines: &Vec<Vec<Point3>>) {
         let mut geometry: VertexBuffers<LyonVertex, u16> = VertexBuffers::new();
         let mut tessellator = StrokeTessellator::new();
@@ -130,7 +128,7 @@ impl LyonLineRenderer {
 
             // 太さ 3.0 ピクセルの綺麗な線を生成
             let options = StrokeOptions::default()
-                .with_line_width(3.0)
+                .with_line_width(0.15)
                 .with_line_join(LineJoin::Round)
                 .with_line_cap(LineCap::Round);
 
@@ -141,7 +139,7 @@ impl LyonLineRenderer {
                     LyonVertex {
                         // ここでZ座標を保持（または平面上に乗せる処理）
                         position: [vertex.position().x, vertex.position().y, 0.0],
-                        color: [0.0, 0.4, 1.0, 1.0], // スケッチブルー
+                        color: [0.0, 0.0, 0.0, 1.0],
                     }
                 }),
             );
@@ -151,7 +149,7 @@ impl LyonLineRenderer {
             return;
         }
 
-        // wgpuバッファへの書き込み
+        // write to GPU buffers
         use wgpu::util::DeviceExt;
         self.vertex_buffer = Some(
             device.create_buffer_init(&wgpu::util::BufferInitDescriptor {

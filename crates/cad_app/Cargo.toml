@@ -6,27 +6,28 @@ edition = "2024"
 
 
 [[bin]]
-name = "idaphsCAD" 
-path = "src/main.rs" 
+name = "idaphsCAD"
+path = "src/main.rs"
 
 [dependencies]
 async-compat = "0.2.5"
 async-trait = "0.1.89"
-slint = { version = "1.16.1", features=["renderer-skia", "unstable-wgpu-27"] }
+slint = { version = "1.16.1", features = ["renderer-skia", "unstable-wgpu-27"] }
 smol = "2.0.2"
 truck-platform = "0.6.0"
-truck-rendimpl = "0.6.0" 
-truck-modeling = "0.6.0" 
+truck-rendimpl = "0.6.0"
+truck-modeling = "0.6.0"
 truck-meshalgo = "0.4.0"
 truck-polymesh = "0.6.0"
 truck-topology = "0.6.0"
-web-time = "1.1.0" 
+web-time = "1.1.0"
 cad_renderer = { path = "../cad_renderer" }
 cad_core = { path = "../cad_core" }
+rfd = "0.17.2"
 
 [target.'cfg(not(target_arch = "wasm32"))'.dependencies]
 # used to run code common to wasm build. 
-pollster = "0.4.0" 
+pollster = "0.4.0"
 
 [build-dependencies]
 slint-build = "1.16.1"

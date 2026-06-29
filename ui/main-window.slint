@@ -17,7 +17,6 @@ import {
 } from "components/toolbar/toolbar.slint";
 
 export { CadActions }
-
 export component AppWindow inherits Window {
     forward-focus: key_handler;
     in property <image> texture <=> i.source;
@@ -47,27 +46,29 @@ export component AppWindow inherits Window {
             accept
         }
     }
+    callback new_file();
+    callback open_file();
+    callback export_file();
+    MenuBar {
+        Menu {
+            title: @tr("File");
+            MenuItem {
+                title: @tr("New");
+                activated => root.new_file();
+            }
+            MenuItem {
+                title: @tr("Open");
+                activated => root.open_file();
+            }
+            MenuItem {
+                title: @tr("export");
+                activated => root.export_file();
+            }
+        }
+    }
     VerticalLayout {
-        label := Text {
-            text: "IDAPhS CAD";
-            horizontal-alignment: center;
-        }
         CADToolbar { }
-        HorizontalLayout {
-            alignment: center;
-            spacing: 10px;
-            Button {
-                text: "Button clicked";
-                clicked => {
-                    label.text = " IDAPhS CAD - Button clicked";
-                }
-            }
-            Button {
-                text: "Camera Reset Button";
-                clicked => root.reset_camera();
-            }
-        }
-        // 画像と操作領域
+        // Viz Area
         Rectangle {
             preferred-width: 640px;
             preferred-height: 480px;
@@ -81,7 +82,6 @@ export component AppWindow inherits Window {
             touch := TouchArea {
                 width: 100%;
                 height: 100%;
-                // マウス移動（ホバー時も含む）
                 pointer-event(event) => {
                     if (event.kind == PointerEventKind.move) {
                         root.mouse_moved(self.mouse-x, self.mouse-y, event.modifiers);
@@ -96,15 +96,14 @@ export component AppWindow inherits Window {
                     }
                 }
 
-                // 左クリックなどの一般的なクリック
+                // left click (normal click)
                 clicked => {
                     root.image_clicked(self.pressed-x, self.pressed-y);
                 }
 
-                // マウスホイール
+                // mouse wheel
                 scroll-event(event) => {
                     root.wheel_scrolled(event.delta-y / 1px);
-                    // accept を返さないと親要素にイベントが流れる場合があります
                     accept
                 }
             }

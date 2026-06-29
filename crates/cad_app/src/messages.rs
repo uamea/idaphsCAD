@@ -5,6 +5,7 @@ pub enum AppMessage {
     CameraMsg { msg: CameraMessage },
     InputMsg { msg: InputMessage },
     ToolbarMsg { msg: ToolbarMessage },
+    FileIOMsg { msg: FileIOMessage },
 }
 
 #[derive(Clone, Debug)]
@@ -58,4 +59,11 @@ pub enum InputMessage {
         key: String,
         modifiers: KeyboardModifiers,
     },
+}
+
+#[derive(Clone, Debug)]
+pub enum FileIOMessage {
+    NewFile,
+    OpenFile,
+    ExportFile,
 }
