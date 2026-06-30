@@ -299,10 +299,12 @@ impl CadTool for SelectionTool {
                         let (x, y) = user_io_utils.current_pos.unwrap_or((x as f64, y as f64));
                         let (start_x, start_y) = user_io_utils.prev_pos.unwrap_or((x, y));
                         let dir2d = Vector2::new(x - start_x, y - start_y);
-                        if user_io_utils.is_ctrl_pressed {
-                            self.pan_scene(dir2d);
-                        } else {
-                            self.rot_camera(dir2d);
+                        if dir2d.magnitude() < 200.0 {
+                            if user_io_utils.is_ctrl_pressed {
+                                self.pan_scene(dir2d);
+                            } else {
+                                self.rot_camera(dir2d);
+                            }
                         }
                     }
                 }

@@ -84,6 +84,8 @@ impl SceneEventHandler {
                 self.user_io_utils.update_mouse_pos(x as f64, y as f64);
             }
             MouseMove { x, y, modifiers } => {
+                self.user_io_utils.is_shift_pressed = modifiers.shift;
+                self.user_io_utils.is_ctrl_pressed = modifiers.control;
                 self.user_io_utils.update_mouse_pos(x as f64, y as f64);
             }
             Wheel { delta } => {}

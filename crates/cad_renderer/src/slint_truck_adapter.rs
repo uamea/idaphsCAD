@@ -19,7 +19,7 @@ where
     T: Clone + Send + 'static,
 {
     let (control_message_sender, control_message_receiver) =
-        smol::channel::bounded::<ControlMessage<T>>(2);
+        smol::channel::bounded::<ControlMessage<T>>(12);
     let (truck_front_buffer_sender, truck_front_buffer_receiver) =
         smol::channel::bounded::<wgpu::Texture>(2);
 
@@ -102,12 +102,6 @@ where
             while let Ok(msg) = control_message_receiver.try_recv() {
                 needs_render |= process_message(msg, &mut texture_pool);
             }
-
-            println!(
-                "needs_render: {}, texture_pool size: {}",
-                needs_render,
-                texture_pool.len()
-            );
 
             if needs_render {
                 let mut texture = texture_pool.pop().unwrap_or_else(|| {
