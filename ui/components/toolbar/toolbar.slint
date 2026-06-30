@@ -44,7 +44,7 @@ export component ToolbarButton inherits Rectangle {
                 width: 32px;
                 height: 32px;
             // horizontal-alignment: center centers the pixels inside the 32px box
-        }
+            }
             Text {
                 text: text;
                 font-size: 11px;
@@ -119,6 +119,15 @@ export component CADToolbar {
                 if (active-tab == 0): HorizontalLayout {
                     HorizontalLayout {
                         spacing: 2px;
+                        ToolbarButton {
+                            cad_mode: "sketch_mode";
+                            op_id: "sketch_mode";
+                            text: "Line";
+                            mode: ToolbarMode.large;
+                            icon: @image-url("../../../assets/line.png");
+                            enabled: true;
+                            checked: false;
+                        }
                         ToolbarButton {
                             cad_mode: "sketch_mode";
                             op_id: "line";

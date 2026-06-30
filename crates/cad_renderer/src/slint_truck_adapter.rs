@@ -121,7 +121,6 @@ where
                 });
 
                 ctx.scene.update_renderer(&mut *ctx.renderer);
-                println!("called here!");
                 ctx.renderer.render_fn(&view);
                 device_handler.queue().submit(std::iter::empty());
 

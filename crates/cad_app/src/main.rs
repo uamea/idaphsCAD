@@ -4,12 +4,16 @@ mod menubar;
 mod messages;
 mod msg_macro;
 mod selection_mode;
+mod sketch_mode;
 mod tool;
+mod toolbar;
 
 use crate::baseop::setup_baseops_controls;
 use crate::menubar::setup_menubar_controls;
 use crate::selection_mode::SelectionTool;
+use crate::sketch_mode::SketchTool;
 use crate::tool::{CadTool, ToolMode, ToolResult};
+use crate::toolbar::setup_toolbar_controls;
 use cad_core::*;
 use cad_renderer::*;
 use messages::{AppMessage, InputMessage};
@@ -26,7 +30,7 @@ slint::include_modules!();
 pub enum ActiveTool {
     Selection(SelectionTool),
     Extrusion,
-    Sketch,
+    Sketch(SketchTool),
 }
 
 #[derive(Debug, Default)]
@@ -71,7 +75,7 @@ impl SceneEventHandler {
     fn move_to_tool(&mut self, new_tool: ToolMode) {
         self.active_tool = match new_tool {
             ToolMode::Selection => ActiveTool::Selection(SelectionTool::new(self.ctx.clone())),
-            ToolMode::Sketch => ActiveTool::Sketch,
+            ToolMode::Sketch => ActiveTool::Sketch(SketchTool::new(self.ctx.clone())),
             ToolMode::Extrusion => ActiveTool::Extrusion,
         };
     }
@@ -123,7 +127,7 @@ impl EventHandler<AppMessage> for SceneEventHandler {
         use crate::ActiveTool::*;
         let result = match &mut self.active_tool {
             Selection(tool) => tool.handle_event(event, &mut self.user_io_utils),
-            Sketch => ToolResult::Continue(false),
+            Sketch(tool) => tool.handle_event(event, &mut self.user_io_utils),
             Extrusion => ToolResult::Continue(false),
         };
 
@@ -267,7 +271,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                     if let Some((_, control_message_sender)) =
                         truck_channels_setup.borrow().as_ref()
                     {
-                        // setup_toolbar_controls(app_weak.clone(), control_message_sender.clone());
+                        setup_toolbar_controls(app_weak.clone(), control_message_sender.clone());
                         setup_baseops_controls(app_weak.clone(), control_message_sender.clone());
                         setup_menubar_controls(app_weak.clone(), control_message_sender.clone())
                     };

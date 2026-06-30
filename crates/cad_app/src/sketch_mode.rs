@@ -1,17 +1,16 @@
 use crate::UserIOUtils;
-use crate::messages::ToolbarMessage::SketchMsg;
-use crate::messages::{AppMessage, InputMessage, SketchMessage, ToolbarMessage};
-use crate::tool::{CadTool, ToolMode, ToolResult};
+use crate::messages::{AppMessage, InputMessage};
+use crate::tool::{CadTool, ToolResult};
 use cad_core::*;
 use std::sync::Arc;
 use truck_meshalgo::prelude::*;
-use truck_platform::{Camera, ProjectionMethod};
+use truck_platform::ProjectionMethod;
 
-pub struct SelectionTool {
+pub struct SketchTool {
     ctx: Arc<AppContext>,
 }
 
-impl SelectionTool {
+impl SketchTool {
     pub fn new(ctx: Arc<AppContext>) -> Self {
         Self { ctx }
     }
@@ -291,7 +290,7 @@ impl SelectionTool {
     }
 }
 
-impl CadTool for SelectionTool {
+impl CadTool for SketchTool {
     fn handle_event(&mut self, event: AppMessage, user_io_utils: &mut UserIOUtils) -> ToolResult {
         match event {
             AppMessage::InputMsg { msg } => match msg {
@@ -313,17 +312,9 @@ impl CadTool for SelectionTool {
                     self.expand_camera(delta);
                 }
                 InputMessage::Click { x, y } => {
+                    println!("Hello from sketch tool!");
                     self.handle_selection(x as f64, y as f64);
                 }
-                _ => {}
-            },
-            AppMessage::ToolbarMsg { msg } => match msg {
-                ToolbarMessage::SketchMsg(detail) => match detail {
-                    SketchMessage::SketchModeClicked => {
-                        return ToolResult::MoveTo(false, ToolMode::Sketch);
-                    }
-                    _ => {}
-                },
                 _ => {}
             },
             _ => {}
