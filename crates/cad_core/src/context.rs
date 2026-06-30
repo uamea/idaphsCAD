@@ -6,11 +6,14 @@ use truck_meshalgo::prelude::*;
 use truck_modeling::{Matrix4, Point3};
 use truck_platform::ProjectionMethod;
 
+/// Handles the layout of the camera and light in the scene.
 pub struct CameraLightLayout {
-    pub cam_orit: Matrix4,
+    pub cam_orit: Matrix4, // the world is fixed, the camera moves
     pub light_pos: Point3,
     pub pivot: Point3,
     pub perspective: ProjectionMethod,
+    pub near_clip: f64,
+    pub far_clip: f64,
 }
 
 impl CameraLightLayout {
@@ -20,6 +23,20 @@ impl CameraLightLayout {
 
     pub fn sync_light_with_camera(&mut self) {
         self.light_pos = self.cam_pos();
+    }
+
+    #[inline(always)]
+    pub fn projection(&self, aspect: f64) -> Matrix4 {
+        let (near, far) = (self.near_clip, self.far_clip);
+        let normal_projection = match self.perspective {
+            ProjectionMethod::Perspective { fov } => perspective(fov, aspect, near, far),
+            ProjectionMethod::Parallel { screen_size } => {
+                let y = screen_size / 2.0;
+                let x = y * aspect;
+                ortho(-x, x, -y, y, near, far)
+            }
+        };
+        normal_projection * self.cam_orit.invert().unwrap()
     }
 }
 

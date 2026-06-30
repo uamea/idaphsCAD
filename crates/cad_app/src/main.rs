@@ -136,21 +136,19 @@ impl EventHandler<AppMessage> for SceneEventHandler {
 }
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
-    // create the cad context
-    // let cad_data = CadData::new();
-    // use truck_modeling::builder;
-    // let cad_data = CadData::from_solid(builder::tsweep(
-    //     &builder::tsweep(
-    //         &builder::tsweep(
-    //             &builder::vertex(Point3::new(-1.0, 0.0, -1.0)),
-    //             1.0 * Vector3::unit_z(),
-    //         ),
-    //         1.0 * Vector3::unit_x(),
-    //     ),
-    //     1.0 * Vector3::unit_y(),
-    // ));
+    use truck_modeling::builder;
+    let cad_data = CadData::from_solid(builder::tsweep(
+        &builder::tsweep(
+            &builder::tsweep(
+                &builder::vertex(Point3::new(-1.0, 0.0, -1.0)),
+                1.0 * Vector3::unit_z(),
+            ),
+            1.0 * Vector3::unit_x(),
+        ),
+        1.0 * Vector3::unit_y(),
+    ));
 
-    let cad_data = CadData::new();
+    // let cad_data = CadData::new();
 
     let app_conf = AppConfig {
         window_width: 640,
@@ -178,12 +176,16 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let cam_light_layout = CameraLightLayout {
         cam_orit: Matrix4::look_at_rh(
             conf_manager.read().cam_light_config.init_cam_pos,
-            Point3::new(0.0, 0.0, 0.0),
+            Point3::origin(),
             conf_manager.read().cam_light_config.base_axis,
-        ),
+        )
+        .invert()
+        .unwrap(),
         light_pos: conf_manager.read().cam_light_config.init_cam_pos,
         pivot: Point3::new(0.0, 0.0, 0.0),
         perspective: conf_manager.read().cam_light_config.cam_perspective,
+        near_clip: conf_manager.read().cam_light_config.near_clip,
+        far_clip: conf_manager.read().cam_light_config.far_clip,
     };
 
     let ctx = Arc::new(AppContext::new(conf_manager, cad_data, cam_light_layout));

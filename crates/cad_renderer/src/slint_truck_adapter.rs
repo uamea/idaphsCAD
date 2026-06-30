@@ -103,8 +103,17 @@ where
                 needs_render |= process_message(msg, &mut texture_pool);
             }
 
-            if needs_render && !texture_pool.is_empty() {
-                let mut texture = texture_pool.pop().unwrap();
+            println!(
+                "needs_render: {}, texture_pool size: {}",
+                needs_render,
+                texture_pool.len()
+            );
+
+            if needs_render {
+                let mut texture = texture_pool.pop().unwrap_or_else(|| {
+                    println!("Warning: Texture pool is empty! On-demand creating a new buffer.");
+                    create_texture("On-demand Buffer", ctx.buffer_width, ctx.buffer_height)
+                });
                 if texture.width() != ctx.buffer_width || texture.height() != ctx.buffer_height {
                     texture =
                         create_texture("Recreated Buffer", ctx.buffer_width, ctx.buffer_height);
@@ -118,6 +127,7 @@ where
                 });
 
                 ctx.scene.update_renderer(&mut *ctx.renderer);
+                println!("called here!");
                 ctx.renderer.render_fn(&view);
                 device_handler.queue().submit(std::iter::empty());
 

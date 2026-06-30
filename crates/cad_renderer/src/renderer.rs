@@ -180,35 +180,25 @@ impl SceneRenderer {
             }
         }
     }
-
-    // pub fn add_rendering_obj(&mut self, rendering_obj: RenderingData);
-
-    // pub fn project_3dvec(&self, v: Vector3) -> Vector2;
-    // pub fn create_dot(&mut self, v: Vector3);
-    // pub fn create_dot_planar(&mut self, v: Vector2);
-    // pub fn create_line(&mut self, v0: Vector3, v1: Vector3);
-    // pub fn create_line_planar(&mut self, v0: Vector3, v1: Vector3);
-    // pub fn create_circle(&mut self, center: Vector3, radius: f64);
-    // pub fn create_circle_planar(&mut self, center: Vector2, radius: f64);
 }
 
 impl TruckRenderer for SceneRenderer {
     fn render_fn(&mut self, view: &wgpu::TextureView) {
         // Sync selection state colors before rendering
         {
-            self.scene.clear_objects();
             {
                 let cam_light_layout = self.ctx.read_cam_light_layout();
-                println!("cam_orit: {:?}", cam_light_layout.cam_orit);
                 let (camera, lights): (&mut Camera, &mut Vec<Light>) = {
                     let studio = self.scene.studio_config_mut();
 
                     (&mut studio.camera, &mut studio.lights)
                 };
-                camera.matrix = cam_light_layout.cam_orit.invert().unwrap();
+                camera.matrix = cam_light_layout.cam_orit;
                 lights[0].position = cam_light_layout.light_pos;
             }
-            self.render_from_cad_data();
+
+            // self.scene.clear_objects();
+            // self.render_from_cad_data();
 
             let data = self.ctx.read_model();
 
